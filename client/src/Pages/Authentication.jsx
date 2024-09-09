@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
 import { LoginForm } from '../components/AuthForm/LoginForm';
 import { RegisterForm } from '../components/AuthForm/RegisterForm';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuthContext';
-import { Navigate } from 'react-router-dom';
 
 
 export const Authentication = () => {
+  const navigate = useNavigate()
 
   const { isAuthenticated } = useAuth();
-  console.log(isAuthenticated)
+
   useEffect(() => {
-    if (isAuthenticated) return <Navigate to='/dashboard' />
+    if (isAuthenticated) return navigate('/dashboard')
   }, [isAuthenticated])
 
   return (
