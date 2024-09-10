@@ -23,10 +23,11 @@ app.use(session(
         secret: envs.SECRET_CODE,
         resave: false,
         saveUninitialized: false,
-        cookie: { 
-            maxAge: 60000,  // Tiempo de expiración de la cookie
-            httpOnly: true,  // Restringir el acceso a HTTP
-            secure: false  // Cambia a true si usas HTTPS
+        cookie: {
+            maxAge: 3600000,
+            httpOnly: true,
+            secure: true,
+            samSite: 'none'
         },
         name: 'connect.sid'
     }
