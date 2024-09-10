@@ -54,6 +54,14 @@ export const RegisterForm = () => {
                     />
                 </div>
                 <div className="flex flex-col w-full mb-4">
+                    <label htmlFor="dni">
+                        DNI
+                    </label>
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 my-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dni" type="text" name="dni" placeholder="Dni"
+                        {...register('dni', { required: true })}
+                    />
+                </div>
+                <div className="flex flex-col w-full mb-4">
                     <label htmlFor="birthdate">
                         Fecha de nacimiento
                         <DatePick
