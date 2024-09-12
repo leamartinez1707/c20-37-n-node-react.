@@ -1,111 +1,126 @@
-import { AvailableTime } from "./availableTime.model";
+import consultationServices from "../consultation/consultation.services.js";
+import { AvailableTime } from "./availableTime.model.js";
 
+const getByDoctor = async (doctorId, start, end) => {
+  const availableTime = await AvailableTime.findOne(
+    {
+      doctor: doctorId,
+    });
 
-const getByID = async (id) => {
-    const availableTime = await AvailableTime.findById(id);
-    return availableTime;
+  return availableTime;
 }
 
 const getByDoctorAndRangeTime = async (doctorId, start, end) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const availableTime = await AvailableTime.findOne(
-        {
-            doctor: doctorId,
-            date: { 
-                $gte: startDate, 
-                $lte: endDate }
+  const availableTime = await AvailableTime.findOne(
+    {
+      doctor: doctorId,
+    });
+
+  const availableSlots = [];
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  for (let currentDate = startDate; currentDate <= endDate; current.setDate(current.getDate() + 1)) {
+    const weekDay = currentDate.getDay();
+
+    const exception = availableTime.exceptions.find(
+      exception => exception.date === currentDate
+    );
+
+    const timeSlots = exception ? exception.timeSlots : availableTime.timeSlots;
+
+    if (!exception && !availableTime.daysOfWeek.includes(weekDay)) {
+      // Si no es un día de la semana disponible y no hay excepción, saltar este día
+      continue;
+    }
+
+    for (let slot of timeSlots) {
+
+      const startTime = new Date(currentDate);
+      const [startHour, startMinute] = slot.startTime.split(':');
+      startTime.setHours(startHour, startMinute);
+
+      const endTime = new Date(currentDate);
+      const [endHour, endMinute] = slot.endTime.split(':');
+      endTime.setHours(endHour, endMinute);
+
+      const isBooked = await consultationServices.getByDoctorInSchedule(doctorId, startTime, endTime);
+
+      if (!isBooked) {
+        availableSlots.push({
+          title: 'Disponible',
+          start: startTime.toISOString(),
+          end: endTime.toISOString(),
         });
-    return availableTime;
+      }
+    }
+  }
+
+  return availableSlots;
 }
 
 const create = async (data) => {
-    const availableTime = await AvailableTime.create(data);
-    return availableTime;
+  const availableTime = await AvailableTime.create(data);
+  return availableTime;
 }
 
-const updateByDoctorAndDate = async (doctorId, date ,data) => {
-    const date = new Date(date);
-    const availableTime = await AvailableTime.findOneAndUpdate(
-        {
-            doctor: doctorId,
-            date: date
-        }, 
-        data,  
-        { new: true}
-    );
-    return availableTime;
-};
+const updateByDoctorAndDate = async (doctorId, date, newTimeSlots) => {
 
-const updateByDoctorAndDay = async (doctorId, dayOfWeek ,data) => {
-    const today = Date.now();
-    const availableTimes = await AvailableTime.updateMany(
-        {
-          doctor: doctorId,
-          $expr: {
-            $in: [
-              { $dayOfWeek: "$date" },
-              [dayOfWeek]
-            ]
-          },
-          date: { 
-            $gte: today
-          }
-        },
-        data,  
-        { new: true}
-      );
+  const availableTime = await AvailableTime.findOne({ doctor: doctorId });
 
-    return availableTimes;
-};
+  const newDate = new Date(date);
 
-const updateByDoctorAndConsultation = async (doctorId, consultation) => {
-    const availableTime = await AvailableTime.findOne({ 
-        doctor: doctorId,
-        date: consultation.date,
-        timeSlots: {
-            startTime: consultation.startTime,
-            endTime: consultation.endTime
-        }
-    },{
-        timeSlots: {
-            booked: true
-        }
+  const existingException = availableTime.exceptions.find(
+    exception => exception.date === newDate
+  );
+
+  if (existingException) {
+    existingException.timeSlots = newTimeSlots;
+  } else {
+    availableTime.exceptions.push({
+      date: newDate,
+      timeSlots: newTimeSlots
     });
+  }
 
-    return availableTime;
+  await availableTime.save();
+
+  return availableTime;
+};
+
+const updateByDoctor = async (doctorId, data) => {
+  const availableTime = await AvailableTime.updateOne(
+    {
+      doctor: doctorId
+    },
+    data,
+    { new: true }
+  );
+
+  return availableTime;
 };
 
 const removeByDoctorAndDate = async (doctorId, date) => {
-    const date = new Date(date);
-    await AvailableTime.findOneAndDelete(
-        {
-            doctor: doctorId,
-            date: date
-        }
-    );
+  const availableTime = await AvailableTime.findOne({ doctor: doctorId });
 
-    return { success: true, message: 'Available Time deleted successfully' };
+  const newDate = new Date(date);
+
+  const existingException = availableTime.exceptions.find(
+    exception => exception.date === newDate
+  );
+
+  if (existingException) {
+    existingException.timeSlots = availableTime.timeSlots;
+  } else {
+    availableTime.exceptions.push({
+      date: newDate,
+      timeSlots: availableTime.timeSlots
+    });
+  }
+
+  await availableTime.save();
+
+  return availableTime;
 };
 
-const removeByDoctorAndDay = async (doctorId, dayOfWeek) => {
-    const today = Date.now();
-    await AvailableTime.deleteMany(
-        {
-          doctor: doctorId,
-          $expr: {
-            $in: [
-              { $dayOfWeek: "$date" },
-              [dayOfWeek]
-            ]
-          },
-          date: { 
-            $gte: today
-          }
-        }
-      );
-
-    return { success: true, message: 'Available Times deleted successfully' };
-};
-
-export default {getByID, getByDoctorAndRangeTime, create, updateByDoctorAndDate, updateByDoctorAndDay, updateByDoctorAndConsultation ,removeByDoctorAndDate, removeByDoctorAndDay}
+export default { getByDoctor, getByDoctorAndRangeTime, create, updateByDoctorAndDate, updateByDoctor, removeByDoctorAndDate }

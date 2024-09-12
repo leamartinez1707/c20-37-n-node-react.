@@ -1,24 +1,11 @@
-import { Calendar } from "./calendar.model";
+import { Calendar } from "./calendar.model.js";
 
-const getByDoctor = async (doctorId) => {
+const getByOwner = async (ownerId) => {
     const calendar = await Calendar.findById({
         owner: doctorId
     }).populate('consultations')
-    .populate({
-        path: 'availability',
-        match: { 'timeSlots.booked': false }
-    })
-    .exec();
-  
-    return calendar;
-}
+        .exec();
 
-const getByPatient = async (patientId) => {
-    const calendar = await Calendar.findById({
-        owner: patientId
-    }).populate('consultations')
-    .exec();
-  
     return calendar;
 }
 
@@ -36,19 +23,26 @@ const removeByOwner = async (ownerId) => {
 };
 
 const updateCalendarByConsultation = async (doctorId, patientId, consultationId) => {
-        const doctorCalendar = await Calendar.findOne({ owner: doctorId });
-        const patientCalendar = await Calendar.findOne({ owner: patientId });
+    const doctorCalendar = await Calendar.findOne({ owner: doctorId });
+    const patientCalendar = await Calendar.findOne({ owner: patientId });
 
-        if (!doctorCalendar || !patientCalendar) {
-            throw new Error("Calendars not found");
+    if (!doctorCalendar || !patientCalendar) {
+        throw new Error("Calendars not found");
+    }
+
+    const updateCalendar = async (calendar) => {
+        if (!calendar.consultations.includes(consultationId)) {
+            calendar.consultations.push(consultationId);
         }
+        await calendar.save();
+    };
 
-        doctorCalendar.consultations = [...new Set([...doctorCalendar.consultations, consultationId])];
-        patientCalendar.consultations = [...new Set([...patientCalendar.consultations, consultationId])];
+    await Promise.all([
+        updateCalendar(doctorCalendar),
+        updateCalendar(patientCalendar)
+    ]);
 
-        await Promise.all([doctorCalendar.save(), patientCalendar.save()]);
-
-        return { success: true, message: 'Calendars updated successfully' };
+    return { success: true, message: 'Calendars updated successfully' };
 };
 
-export default {getByDoctor, getByPatient, create, removeByOwner, updateCalendarByConsultation}
+export default { getByOwner, create, removeByOwner, updateCalendarByConsultation }

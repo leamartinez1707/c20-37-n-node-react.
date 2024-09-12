@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 
 const consultationSchema = new Schema({
@@ -27,6 +28,11 @@ const consultationSchema = new Schema({
     reason: {
       type: String,
       required: true
+    },
+    type:{
+      type: String,
+      enum: ['in person', 'virtual'],
+      default: 'virtual'
     }
 }, {
   timestamps: true
