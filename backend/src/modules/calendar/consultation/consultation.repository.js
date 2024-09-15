@@ -10,50 +10,66 @@ const getByID = async (id) => {
 const getByDoctorAndRangeTime = async (doctorId, start, end) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
-    const consultation = await Consultation.findOne(
-        {
-            doctor: doctorId,
-            date: {
-                $gte: startDate,
-                $lte: endDate
-            }
+
+    const consultations = await Consultation.find({
+        doctor: doctorId,
+        startTime: {
+            $gte: startDate,
+            $lt: endDate
+        }
+    }).populate('patient');
+
+    let consultationsSlots = [];
+
+    consultations.forEach(consultation => {
+        consultationsSlots.push({
+            _id: consultation._id,
+            title: consultation.patient.firstName + ' ' + consultation.patient.lastName,
+            start: consultation.startTime.toISOString(),
+            end: consultation.endTime.toISOString(),
+            type: 'consultation'
         });
-    return consultation;
-}
+    });
+
+    return consultationsSlots;
+};
 
 const getByPatientAndRangeTime = async (patientId, start, end) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
-    const consultation = await Consultation.findOne(
+    const consultations = await Consultation.find(
         {
             patient: patientId,
-            date: {
+            startTime: {
                 $gte: startDate,
-                $lte: endDate
+                $lt: endDate
             }
         });
-    return consultation;
+    return consultations;
 }
 
-const getByDoctorInSchedule = async (doctorId, startTime, endTime) => {
-
+const getByDoctorInSchedule = async (doctorId, startTime) => {
+    
     const consultation = await Consultation.findOne({
         doctor: doctorId,
-        date: currentDate,
-        startTime: { $gte: startTime, $lt: endTime },
+        startTime: startTime,
     });
+    
     return consultation;
 }
 
-const create = async (data, doctorId, patientId) => {
+const create = async (data) => {
     const consultation = await Consultation.create(data);
-
-    await calendarServices.updateCalendarByConsultation(doctorId, patientId, consultation._id);
+    console.log(consultation);
+    
+    await calendarServices.updateCalendarByConsultation(consultation.doctor, consultation.patient, consultation);
 
     return consultation;
 }
 
 const updateByID = async (id, data) => {
+    console.log(data);
+    
     const consultation = await Consultation.findByIdAndUpdate(id,
         data,
         { new: true }

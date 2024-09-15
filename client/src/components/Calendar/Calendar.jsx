@@ -2,54 +2,116 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import esLocale from '@fullcalendar/core/locales/es'
+import { useAuth } from "../../hooks/useAuthContext";
+import { useCalendar } from "../../hooks/useCalendarContext";
+import { useGeneralContext } from '../../hooks/useGeneralContext';
+import { useEffect, useState } from 'react';
+import { useRef } from 'react';
+import { ModalConsulation } from './Doctor/modalConsultation';
 
 export const Calendar = () => {
 
-  const handleDateClick = (info) => {
-    console.log("Fecha seleccionada: ", info.dateStr);
+  const { logued } = useAuth();
+  const { availableTime, consultations, setSlot } = useGeneralContext();
+  //const { getConsultation, , getAvailableTimeByRangeDate,  createNewConsultation, updateConsultation, deleteConsultation} = useCalendar();
+  const { getAvailableTimeByRangeDate, getConsultationByDoctor } = useCalendar();
+  const [events, setEvents] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
+  const calendarRef = useRef(null);
+
+  const fetchData = (start, end) => {
+
+    getAvailableTimeByRangeDate(logued._id, start, end);
+    getConsultationByDoctor(logued._id, start, end);
+
+    setEvents([...availableTime, ...consultations]);
+  };
+
+  const handleDatesSet = (dateInfo) => {
+    const viewType = dateInfo.view.type;
+    let start = new Date(dateInfo.startStr);
+    let end = new Date(dateInfo.end);
+
+    if (viewType === 'timeGridDay') {
+      //end.setHours(23, 59, 59, 999); // Set end of the day
+      start = start.toISOString();
+      end = end.toISOString();
+    } else if (viewType === 'dayGridMonth') {
+      start = new Date(start.getUTCFullYear(), start.getUTCMonth() + 1);
+      start.setUTCDate(1);
+      start.setUTCHours(0, 0, 0, 0);
+      end = new Date(end.getUTCFullYear(), end.getUTCMonth(), 0);
+      end.setUTCHours(0, 0, 0, 0);
+      start = start.toISOString();
+      end = end.toISOString();
+    } else {
+      start = start.toISOString();
+      end = new Date(end.setDate(end.getDate() - 1)).toISOString(); // Default for other views
+    }
+    console.log("CAMBIO DE FECHAAAAS")
+
+    //fetchData(start, end); 
   };
 
   const handleEventClick = (eventInfo) => {
-    console.log("Evento seleccionado: ", eventInfo.event.title);
+    console.log("Evento seleccionado: ", eventInfo);
+    setSlot(eventInfo.event);
+  };
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   const renderEventContent = (eventInfo) => {
-    console.log(eventInfo);
-
     return (
-      <div className="p-2 flex flex-col">
+      //<div className={`p-2 ${eventInfo.event._def.extendedProps.type == 'consultation'? 'bg-primary border-primary hover:bg-blue-900' : 'bg-secondary border-secondary hover:bg-teal-500'} flex flex-col`}>
+      <button onClick={handleOpenModal} data-modal-target="crud-modal" data-modal-toggle="crud-modal" className={`w-full h-full flex flex-col text-white ${eventInfo.event._def.extendedProps.type == 'consultation' ? 'bg-primary border-primary hover:bg-blue-900' : 'bg-secondary border-secondary hover:bg-teal-500'} rounded-sm text-sm px-5 py-1 text-center `} type="button">
         <b>{eventInfo.timeText}</b>
         <i>{eventInfo.event.title}</i>
-      </div>
+      </button>
     );
   }
 
+  useEffect(() => {
+    const calendarApi = calendarRef.current.getApi();
+    const start = calendarApi.view.activeStart.toISOString();
+    const endDate = new Date(calendarApi.view.activeEnd);
+    endDate.setDate(endDate.getUTCDate() - 1);
+    const end = endDate.toISOString();
+
+    console.log("RENDERIZADO");
+
+    fetchData(start, end);
+  }, []);
+
   return (
-    <div className='w-screen min-h-screen my-24 flex justify-center'>
-      <div className='w-10/12'>
+    <div className="w-full mx-auto flex-1 bg-gray-100 dark:bg-gray-800 p-4 shadow-md">
+      <h1 className="text-3xl font-bold mb-6">Agendar consulta</h1>
+      {/* <div className='w-screen min-h-screen my-24 flex justify-center'> */}
+      <div className='w-10/12 mx-auto max-h-lvh'>
         <FullCalendar
+          ref={calendarRef}
           headerToolbar={{
             end: 'prev,next today',
             center: 'title',
             start: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
+          locale={esLocale}
+          timeZone='UTC'
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView='timeGridWeek'
           editable={true}
           selectable={true}
-          events={[
-            {
-              title: 'Consulta virtual',
-              start: '2024-09-06T09:00:00',
-              end: '2024-09-06T10:00:00',
-              extendedProps: {
-                patient: 'John Doe'
-              }
-            }
-          ]}
+          events={events}
           eventContent={renderEventContent}
-          dateClick={handleDateClick}
           eventClick={handleEventClick}
+          datesSet={handleDatesSet}
           select={(info) => {
             console.log("Seleccionado de ", info.startStr, " hasta ", info.endStr);
           }}
@@ -61,6 +123,8 @@ export const Calendar = () => {
           }}
         />
       </div>
+      <ModalConsulation show={showModal} handleClose={handleCloseModal} />
     </div>
+    // </div>
   )
 }

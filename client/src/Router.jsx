@@ -14,18 +14,22 @@ import { Error404 } from './components/NotFound/Error404'
 import { ProfilePage } from './Pages/User/ProfilePage'
 import { MedicalHistoryPage } from './Pages/User/MedicalHistoryPage'
 import { Calendar } from './components/Calendar/Calendar'
-import { DashboardPage } from './Pages/User/DashboardPage'
+import { DashboardPage } from './Pages/DashboardPage'
+
+
 
 export const Router = () => {
     return (
         <BrowserRouter>
             <Routes>
                 <Route element={<Layout />}>
+                    {/* Rutas públicas */}
                     <Route path='/' element={<Home />} />
                     <Route path='/login' element={<Authentication />} />
                     <Route path='/register' element={<Authentication />} />
 
                     <Route element={<ProtectedRoute />}>
+                        {/* Rutas generales users autenticados */}
                         <Route path='/calendar' element={<Calendar />} />
                         <Route path='/profile' element={<ProfilePage />} />
                         <Route path='/dashboard' element={<DashboardPage />} />
@@ -38,7 +42,6 @@ export const Router = () => {
                         {/* Rutas para el doctor */}
                         <Route path='/doc' element={<DoctorLayout />}>
                             <Route path='/doc/clinicalHistory/' element={<ClinicalHistoryPage />} />
-                            <Route path='/doc/medicalHistory/' element={<MedicalHistoryPage />} />
                         </Route>
 
                         {/* Rutas para el usuario */}

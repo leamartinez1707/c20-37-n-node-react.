@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { createContext, useState } from 'react';
+import { createContext, useState, useRef } from 'react';
 
 // Crear el contexto
 export const GeneralContext = createContext();
@@ -14,8 +14,16 @@ export const GeneralProvider = ({ children }) => {
     const [calendar, setCalendar] = useState([]);
     const [availableTime, setAvailableTime] = useState([]);
     const [doctorAvailability, setDoctorAvailability] = useState([]);
+    const [consultations, setConsultations] = useState([]);
     const [consultation, setConsultation] = useState([]);
+    const [slot, setSlot] = useState({});
     const [errors, setErrors] = useState('');
+    const [activeMenu, setActiveMenu] = useState('dashboard');
+    const [activeTab, setActiveTab] = useState(0);
+    const [onCall, setOnCall] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
+    const tabsRef = useRef(null);
 
 
     return (
@@ -34,12 +42,25 @@ export const GeneralProvider = ({ children }) => {
             setAvailableTime,
             doctorAvailability,
             setDoctorAvailability,
+            consultations,
+            setConsultations,
             consultation,
             setConsultation,
+            slot,
+            setSlot,
             authenticated,
             setAuthenticated,
             errors,
-            setErrors
+            setErrors,
+            activeMenu,
+            setActiveMenu,
+            activeTab,
+            setActiveTab,
+            onCall,
+            setOnCall,
+            tabsRef,
+            isSidebarCollapsed,
+            setIsSidebarCollapsed
         }}>
             {children}
         </GeneralContext.Provider>
