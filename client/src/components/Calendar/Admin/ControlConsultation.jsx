@@ -5,12 +5,9 @@ import { useGeneralContext } from "../../../hooks/useGeneralContext"
 import { useEffect } from "react";
 import { useCalendar } from "../../../hooks/useCalendarContext";
 import { Modal } from "flowbite-react";
-import { useAuth } from "../../../hooks/useAuthContext";
 
-export const ModalConsulation = ({ show, handleClose }) => {
+export const ControlConsultation = ({ show, handleClose, doctorId }) => {
 
-    const { logued } = useAuth();
-    //const { slot, consultation } = useGeneralContext();
     const { slot } = useGeneralContext();
     const { consultation, getConsultation, setConsultation, createNewConsultation, updateConsultation } = useCalendar();
     const [newConsultation, setNewConsultation] = useState({});
@@ -53,7 +50,7 @@ export const ModalConsulation = ({ show, handleClose }) => {
             ...prevConsultation,
             startTime: slot._instance?.range.start.toISOString(),
             endTime: slot._instance?.range.end.toISOString(),
-            doctor: logued._id,
+            doctor: doctorId,
             type: type,
             status: status
         }));
