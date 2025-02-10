@@ -155,7 +155,7 @@ Convertirnos en la plataforma líder de telemedicina en Argentina, promoviendo u
 
 <hr>
 <h2>Deploy</h2>
-<p>Acceder a la plataforma <a href="https://c20-37-n-node-react.vercel.app/">aquí</a>.</p>
+<p>Acceder a la plataforma <a href="https://saludnet.vercel.app/">aquí</a>.</p>
 
 
 <hr>
