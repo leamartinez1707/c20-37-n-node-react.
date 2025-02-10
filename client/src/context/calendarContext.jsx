@@ -71,29 +71,22 @@ export const CalendarProvider = ({ children }) => {
 
     const getDoctorAvalability = async (doctorId) => {
         try {
-            setLoading(true);
-
             const response = await getAvailableTimeByDoctor(doctorId);
-
             // Verificar si la respuesta es válida
             if (!response || !response.data || !response.data.playload) {
                 toast.error('No se pudo obtener los horarios disponibles');
                 return null;
             }
-
+            console.log('LLAMADA A LA API')
             // Establecer los horarios disponibles
             setDoctorAvailability(response.data.playload);
-
             // Devolver los horarios disponibles
             return response.data.playload;
-
         } catch (error) {
             // Mostrar el mensaje de error
             toast.error('No se pudo obtener los horarios disponibles');
             return null; // Retornar null en caso de error
 
-        } finally {
-            setLoading(false); // Asegurarse de desactivar el loading
         }
     };
     const getAvailableTimeByRangeDate = async (doctorId, startDate, endDate) => {
@@ -191,12 +184,14 @@ export const CalendarProvider = ({ children }) => {
     const getConsultation = async (id) => {
         try {
             setLoading(true)
+            console.log('RENDERIZANDO GETCONSULTATION' + id);
             const response = await getConsultationByID(id)
             if (!response) {
                 return toast.error('No se pudo obtener la consulta')
             }
             setConsultation(response.data.playload);
         } catch (error) {
+            console.log(error)
             toast.error('No se pudo obtener la consulta', error)
         }
         finally {
@@ -225,10 +220,8 @@ export const CalendarProvider = ({ children }) => {
     const getConsultationByPatient = async (patientId, startDate, endDate) => {
         try {
             setLoading(true)
-            
+
             const response = await getConsultationByPatientAndRangeDate(patientId, startDate, endDate)
-            console.log(response);
-            
             if (!response) {
                 return toast.error('No se pudo obtener las consultas')
             }
@@ -245,8 +238,6 @@ export const CalendarProvider = ({ children }) => {
         try {
             setLoading(true)
             const response = await createConsultation(values)
-            console.log("RESPUESTA",response);
-            
             if (response.status !== 201) {
                 return toast.error('No se pudo crear la consulta')
             }
@@ -255,7 +246,7 @@ export const CalendarProvider = ({ children }) => {
             return response
         } catch (error) {
             toast.error(error.response.data.msg)
-            toast.error('No se pudo establecer crear la consulta')
+            toast.error('No se pudo agendar la consulta')
         }
         finally {
             setLoading(false)

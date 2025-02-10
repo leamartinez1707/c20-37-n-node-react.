@@ -16,6 +16,7 @@ import { MedicalHistoryPage } from './Pages/User/MedicalHistoryPage'
 import { Calendar } from './components/Calendar/Calendar'
 import { DashboardPage } from './Pages/DashboardPage'
 import { ActiveDoctorsPage } from './Pages/ActiveDoctorsPage'
+import { ContactPage } from './Pages/ContactPage'
 
 
 
@@ -29,6 +30,7 @@ export const Router = () => {
                     <Route path='/login' element={<Authentication />} />
                     <Route path='/register' element={<Authentication />} />
                     <Route path='/specialists' element={<ActiveDoctorsPage />} />
+                    <Route path='/contact' element={<ContactPage />} />
                     <Route element={<ProtectedRoute />}>
                         {/* Rutas generales users autenticados */}
                         <Route path='/calendar' element={<Calendar />} />

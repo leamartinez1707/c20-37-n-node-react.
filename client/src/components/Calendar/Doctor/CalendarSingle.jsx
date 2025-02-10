@@ -11,7 +11,7 @@ import { useRef } from "react";
 import { ModalConsulation } from "../Patient/ScheduleConsultation";
 import { ControlConsultation } from "../Admin/ControlConsultation";
 
-export const Calendar = ({ doctorId }) => {
+export const Calendar = ({ doctorId = null }) => {
   const { logued } = useAuth();
 
   const { setSlot } = useGeneralContext();
@@ -39,34 +39,6 @@ export const Calendar = ({ doctorId }) => {
     }
   };
 
-  /*   const handleDatesSet = (dateInfo) => {
-    const viewType = dateInfo.view.type;
-    let start = new Date(dateInfo.startStr);
-    let end = new Date(dateInfo.end);
-
-    if (viewType === 'timeGridDay') {
-      //end.setHours(23, 59, 59, 999); // Set end of the day
-      start = start.toISOString();
-      end = end.toISOString();
-    } else if (viewType === 'dayGridMonth') {
-      start = new Date(start.getUTCFullYear(), start.getUTCMonth() + 1);
-      start.setUTCDate(1);
-      start.setUTCHours(0, 0, 0, 0);
-      end = new Date(end.getUTCFullYear(), end.getUTCMonth(), 0);
-      end.setUTCHours(0, 0, 0, 0);
-      start = start.toISOString();
-      end = end.toISOString();
-    } else {
-      start = start.toISOString();
-      end = new Date(end.setDate(end.getDate() - 1)).toISOString();
-    }
-
-    console.log(start);
-    console.log(end);
-    
-    // fetchData(start, end); DESCOMENTAR ESTO Y PROBAR SI SIRVE, HACE LLAMADAS CADA VEZ QUE CAMBIAMOS DE SEMANA , DIA MES
-  }; */
-
   const handleEventClick = (eventInfo) => {
     // console.log("Evento seleccionado: ", eventInfo);
     setSlot(eventInfo.event);
@@ -88,11 +60,10 @@ export const Calendar = ({ doctorId }) => {
         onClick={handleOpenModal}
         data-modal-target="crud-modal"
         data-modal-toggle="crud-modal"
-        className={`w-full h-full flex flex-col text-white ${
-          eventInfo.event._def.extendedProps.type == "consultation"
-            ? "bg-primary border-primary hover:bg-blue-900"
-            : "bg-secondary border-secondary hover:bg-teal-500"
-        } rounded-sm text-sm px-5 py-1 text-center `}
+        className={`w-full h-full flex flex-col text-white ${eventInfo.event._def.extendedProps.type == "consultation"
+          ? "bg-primary border-primary hover:bg-blue-900"
+          : "bg-secondary border-secondary hover:bg-teal-500"
+          } rounded-sm text-sm px-5 py-1 text-center `}
         type="button"
       >
         <b>{eventInfo.timeText}</b>
@@ -141,20 +112,20 @@ export const Calendar = ({ doctorId }) => {
         />
       </div>
       {
-        logued.role == "admin" && 
+        logued.role == "admin" &&
         <ControlConsultation
-        show={showModal}
-        handleClose={handleCloseModal}
-        doctorId={doctorId}
-      />
+          show={showModal}
+          handleClose={handleCloseModal}
+          doctorId={doctorId}
+        />
       }
       {
         logued.role == "user" &&
-      <ModalConsulation
-        show={showModal}
-        handleClose={handleCloseModal}
-        doctorId={doctorId}
-      />
+        <ModalConsulation
+          show={showModal}
+          handleClose={handleCloseModal}
+          doctorId={doctorId}
+        />
       }
     </div>
     // </div>

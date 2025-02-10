@@ -23,7 +23,9 @@ export const ModalConsultation = ({ show, handleClose }) => {
 
     useEffect(() => {
         setConsultation(null)
-        getConsultation(slot._def?.extendedProps._id);
+        if (slot._def?.extendedProps._id) {
+            getConsultation(slot._def?.extendedProps._id);
+        }
     }, [slot])
 
 
@@ -47,11 +49,11 @@ export const ModalConsultation = ({ show, handleClose }) => {
                             <div className="grid gap-4 mb-4 grid-cols-2">
                                 <div className="col-span-2">
                                     <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre del Doctor</label>
-                                    <input type="text" name="doctorName" id="name" disabled value={consultation? consultation.doctor.firstName + " " + consultation.doctor?.lastName : ''} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " />
+                                    <input type="text" name="doctorName" id="name" disabled value={consultation ? consultation.doctor.firstName + " " + consultation.doctor?.lastName : ''} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " />
                                 </div>
                                 <div className="col-span-2">
                                     <label htmlFor="specialty" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Especialidad</label>
-                                    <input type="text" name="specialty" id="specialty" disabled value={consultation? consultation.doctor.specialty : ''} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " />
+                                    <input type="text" name="specialty" id="specialty" disabled value={consultation ? consultation.doctor.specialty : ''} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 " />
                                 </div>
                                 <div className="col-span-2 sm:col-span-1">
                                     <label htmlFor="date" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha</label>
@@ -59,7 +61,7 @@ export const ModalConsultation = ({ show, handleClose }) => {
                                 </div>
                                 <div className="col-span-2 sm:col-span-1">
                                     <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Estado</label>
-                                    <select id="status" name="status" value={consultation? consultation.status : 'scheduled'} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
+                                    <select id="status" name="status" value={consultation ? consultation.status : 'scheduled'} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
                                         <option value="scheduled" >Programada</option>
                                         <option value="completed"  >Completada</option>
                                         <option value="cancelled" >Cancelada</option>
@@ -76,14 +78,14 @@ export const ModalConsultation = ({ show, handleClose }) => {
                                 </div>
                                 <div className="col-span-2 sm:col-span-1">
                                     <label htmlFor="type" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo</label>
-                                    <select id="type"  value={consultation? consultation.type : 'virtual'} name="type" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
+                                    <select id="type" value={consultation ? consultation.type : 'virtual'} name="type" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
                                         <option value="virtual">Virtual</option>
                                         <option value="in person">Presencial</option>
                                     </select>
                                 </div>
                                 <div className="col-span-2">
-                                    <label htmlFor="description"  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Motivo</label>
-                                    <textarea id="description"  name="reason" rows="4" value={consultation? consultation.reason : ''} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el motivo de la consulta"></textarea>
+                                    <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Motivo</label>
+                                    <textarea id="description" name="reason" rows="4" value={consultation ? consultation.reason : ''} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el motivo de la consulta"></textarea>
                                 </div>
                             </div>
                         </form>

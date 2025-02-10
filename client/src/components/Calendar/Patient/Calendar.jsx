@@ -14,16 +14,15 @@ export const Calendar = () => {
 
   const { logued } = useAuth();
   const { setSlot } = useGeneralContext();
-  const {getConsultationByPatient, consultations, consultation, setConsultation } = useCalendar();
+  const { getConsultationByPatient, consultations, consultation, setConsultation } = useCalendar();
   const [events, setEvents] = useState([]);
-  const [showModal, setShowModal] = useState(consultation? true : false);
+  const [showModal, setShowModal] = useState(consultation ? true : false);
 
   const calendarRef = useRef(null);
 
   const fetchData = (start, end) => {
-
     getConsultationByPatient(logued._id, start, end);
-    
+
     setEvents([...consultations]);
   };
 
@@ -62,7 +61,6 @@ export const Calendar = () => {
   };
 
   const handleOpenModal = () => {
-    console.log(consultation);
     setShowModal(true);
   };
 
@@ -92,8 +90,9 @@ export const Calendar = () => {
   return (
     <div className="w-full mx-auto flex-1 bg-gray-100 dark:bg-gray-800 p-4 shadow-md">
       <h1 className="text-3xl font-bold mb-5">Consultas Programadas</h1>
+      <p className='text-gray-500 my-4'>Acá puedes ver tus consultas programadas con el médico.</p>
       {/* <div className='w-screen min-h-screen my-24 flex justify-center'> */}
-      <div className='w-10/12 mx-auto max-h-lvh'>
+      <div className='w-full mx-auto max-h-lvh'>
         <FullCalendar
           ref={calendarRef}
           headerToolbar={{

@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
+import { useState } from 'react'
 import { useGeneralContext } from '../../hooks/useGeneralContext'
 import { Card, Button } from 'flowbite-react'
 import { FaCalendarAlt, FaFileAlt, FaClock, FaUserMd, FaHospital, FaFilePrescription } from 'react-icons/fa'
+import WorkingOnModal from '../Modal/WorkingOnModal'
 
 export const UserDashboard = ({ setActiveMenu }) => {
-
+  const [openModal, setOpenModal] = useState(false)
   const { logued } = useGeneralContext()
   // Estos datos normalmente vendrían de una API o estado global
   const nextAppointment = {
@@ -40,10 +42,14 @@ export const UserDashboard = ({ setActiveMenu }) => {
             </p>
           </div>
           <div className="flex gap-x-2 justify-between mt-4">
-            <Button className="bg-gray-200 hover:bg-gray-400 dura tion-200 transition-colors" color="primary" >
+            <Button
+              onClick={() => setOpenModal(true)}
+              className="bg-gray-200 hover:bg-gray-400 dura tion-200 transition-colors" color="primary" >
               Ver detalles de la consulta
             </Button>
-            <Button className="bg-gray-200 hover:bg-gray-400 duration-200 transition-colors" color="primary" >
+            <Button
+              onClick={() => setOpenModal(true)}
+              className="bg-gray-200 hover:bg-gray-400 duration-200 transition-colors" color="primary" >
               Ver consultas anteriores
             </Button>
           </div>
@@ -71,6 +77,7 @@ export const UserDashboard = ({ setActiveMenu }) => {
           </div>
         </Card>
       </div>
+      <WorkingOnModal show={openModal} onClose={() => setOpenModal(false)} />
     </div >
   )
 }

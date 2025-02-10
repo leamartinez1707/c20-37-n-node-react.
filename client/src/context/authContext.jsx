@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
             setUsers([...users, response.data.playload])
             return response
         } catch (error) {
+            console.log(error)
             toast.error(error.response.data.msg)
             toast.error('No se pudo registrar el usuario')
         }

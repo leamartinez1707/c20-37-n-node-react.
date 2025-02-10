@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
 //import { useCalendar } from "../../../hooks/useCalendarContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGeneralContext } from "../../../hooks/useGeneralContext"
-import { useEffect } from "react";
 import { useCalendar } from "../../../hooks/useCalendarContext";
 import { Modal } from "flowbite-react";
 import { useAuth } from "../../../hooks/useAuthContext";
@@ -29,9 +28,9 @@ export const ModalConsulation = ({ show, handleClose }) => {
 
     useEffect(() => {
         setConsultation(null)
-        if(slot._def?.extendedProps.type == 'consultation'){
+        if (slot._def?.extendedProps.type == 'consultation') {
             getConsultation(slot._def?.extendedProps._id);
-            console.log(consultation); 
+            console.log(consultation);
         }
     }, [slot])
 
@@ -63,10 +62,10 @@ export const ModalConsulation = ({ show, handleClose }) => {
         e.preventDefault();
         setNewConsultationValues();
 
-        if(slot._def?.extendedProps.type == 'available'){
+        if (slot._def?.extendedProps.type == 'available') {
             createNewConsultation(newConsultation);
         }
-        else{
+        else {
             updateConsultation(consultation._id, newConsultation);
         }
         console.log(newConsultation);
@@ -121,14 +120,14 @@ export const ModalConsulation = ({ show, handleClose }) => {
                                 </div>
                                 <div className="col-span-2 sm:col-span-1">
                                     <label htmlFor="type" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo</label>
-                                    <select id="type"  value={type} onChange={handleTypeChange} name="type" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
+                                    <select id="type" value={type} onChange={handleTypeChange} name="type" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
                                         <option value="virtual">Virtual</option>
                                         <option value="in person">Presencial</option>
                                     </select>
                                 </div>
                                 <div className="col-span-2">
-                                    <label htmlFor="description"  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Motivo</label>
-                                    <textarea id="description"  name="reason" rows="4" onChange={handleChange} value={consultation ? consultation.reason : null} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el motivo de la consulta"></textarea>
+                                    <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Motivo</label>
+                                    <textarea id="description" name="reason" rows="4" onChange={handleChange} value={consultation ? consultation.reason : null} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el motivo de la consulta"></textarea>
                                 </div>
                             </div>
                             <button type="submit" className="text-white inline-flex items-center bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">

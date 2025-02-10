@@ -6,8 +6,7 @@ import esLocale from '@fullcalendar/core/locales/es'
 import { useAuth } from "../../hooks/useAuthContext";
 import { useCalendar } from "../../hooks/useCalendarContext";
 import { useGeneralContext } from '../../hooks/useGeneralContext';
-import { useEffect, useState } from 'react';
-import { useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ModalConsulation } from './Doctor/modalConsultation';
 
 export const Calendar = () => {

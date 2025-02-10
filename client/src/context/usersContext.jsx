@@ -20,6 +20,7 @@ export const UsersProvider = ({ children }) => {
             if (!response) {
                 return toast.error('No se pudo obtener los usuarios')
             }
+            console.log('getting users')
             setUsers(response.data.playload)
         } catch (error) {
             toast.error('No se pudo obtener los usuarios')
